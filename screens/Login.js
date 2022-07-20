@@ -124,9 +124,9 @@ const Login = () => {
             onPress={() => {
               promptAsync();
             }}
-            style={styles.button}
+            style={styles.googlebutton}
           >
-            <Text style={styles.buttonText}>sign in with google</Text>
+            <Text style={styles.googlebuttonText}>Sign in with google</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
+    marginTop: 10,
   },
   buttonOutline: {
     backgroundColor: "white",
@@ -180,5 +181,19 @@ const styles = StyleSheet.create({
     color: "#0782F9",
     fontWeight: "700",
     fontSize: 16,
+  },
+
+  googlebuttonText: {
+    color: "white",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+  googlebutton: {
+    backgroundColor: "gray",
+    width: "100%",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 10,
   },
 });

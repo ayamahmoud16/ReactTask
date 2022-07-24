@@ -12,6 +12,9 @@ import Login from "./screens/Login";
 import Home from "./screens/Home";
 import CustomSidebarMenu from "./CustomSidebarMenu";
 import { View, TouchableOpacity, Image } from "react-native";
+import { auth } from "./firebase";
+import Register from "./screens/Register";
+
 // const Stack = createNativeStackNavigator();
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -78,13 +81,15 @@ function secondScreenStack({ navigation }) {
         },
       }}
     >
-      <Stack.Screen
-        name="Login"
-        component={Login}
-        options={{
-          title: "Login", //Set Header Title
-        }}
-      />
+      {auth.currentUser && (
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{
+            title: "Login", //Set Header Title
+          }}
+        />
+      )}
     </Stack.Navigator>
   );
 }
@@ -99,14 +104,19 @@ export default function App() {
         drawerContent={(props) => <CustomSidebarMenu {...props} />}
       >
         <Drawer.Screen
+          name="Login"
+          options={{ drawerLabel: "Login" }}
+          component={Login}
+        />
+        <Drawer.Screen
           name="Home"
           options={{ drawerLabel: "Home" }}
           component={Home}
         />
         <Drawer.Screen
-          name="Login"
-          options={{ drawerLabel: "Login" }}
-          component={Login}
+          name="Register"
+          options={{ drawerLabel: "Register" }}
+          component={Register}
         />
       </Drawer.Navigator>
     </NavigationContainer>

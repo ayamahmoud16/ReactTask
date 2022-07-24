@@ -23,36 +23,28 @@ import { Button } from "react-native-web";
 import UserAvatar from "react-native-user-avatar";
 //
 WebBrowser.maybeCompleteAuthSession();
-const Login = () => {
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [image, setImage] = useState(null);
   const navigation = useNavigation();
   const [googleSumitting, setGoogleSumitting] = useState(false);
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        navigation.navigate("Home", user);
-      }
-    });
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((user) => {
+  //     if (user) {
+  //       navigation.navigate("Home", user);
+  //     }
+  //   });
 
-    return unsubscribe;
-  }, []);
+  //   return unsubscribe;
+  // }, []);
 
   const handleSignUp = () => {
     auth
-      .signOut()
-      .then(() => {
-        navigation.navigate("Register");
-      })
-      .catch((error) => alert(error.message));
-  };
-
-  const handleLogin = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
+      .createUserWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log("Logged in with:", user.email);
+        console.log("Registered with:", user.email);
       })
       .catch((error) => alert(error.message));
   };
@@ -78,24 +70,6 @@ const Login = () => {
     "https://www.seekpng.com/png/detail/115-1150053_avatar-png-transparent-png-royalty-free-default-user.png";
   const proileImage = "react_logo.png";
 
-  //   setGoogleSumitting(true);
-  //   const config = {
-  //     androidClientId: `363109457211-9tp2oadmh1q8lmb4l5u109p4eg1guf79.apps.googleusercontent.com`,
-  //     scopes: ["profile", "email"],
-  //   };
-  //   Google.logInAsync(config)
-  //     .then((result) => {
-  //       const { type, user } = result;
-  //       if (type == "success") {
-  //       } else {
-  //       }
-  //       setGoogleSumitting(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setGoogleSumitting(false);
-  //     });
-  // };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
@@ -104,7 +78,9 @@ const Login = () => {
           name="Avishay Nar"
           // src="https://dummyimage.com/100x100/000/fff"
         /> */}
-        <Image source={{ uri: BASE_PATH }} style={styles.sideMenuProfileIcon} />
+        {/* <Image source={{ uri: BASE_PATH }} style={styles.sideMenuProfileIcon} /> */}
+        {/* <h1>Register Your Account</h1> */}
+
         <TextInput
           placeholder="Email"
           value={email}
@@ -121,31 +97,18 @@ const Login = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           onPress={handleSignUp}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
-        {!googleSumitting && (
-          <TouchableOpacity
-            onPress={() => {
-              promptAsync();
-            }}
-            style={styles.googlebutton}
-          >
-            <Text style={styles.googlebuttonText}>Sign in with google</Text>
-          </TouchableOpacity>
-        )}
       </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
   container: {

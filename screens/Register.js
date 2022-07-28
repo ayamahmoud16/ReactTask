@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/native";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -7,80 +7,85 @@ import {
   TouchableOpacity,
   View,
   Image,
+  Button,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
-import { ResponseType } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithCredential,
-} from "firebase/auth";
+import PhoneInput from "react-native-phone-input";
 import { auth } from "../firebase";
-import { createSwitchNavigator } from "react-navigation";
-import { Button } from "react-native-web";
-import UserAvatar from "react-native-user-avatar";
-//
+import * as ImagePicker from "expo-image-picker";
+
 WebBrowser.maybeCompleteAuthSession();
 const Register = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [image, setImage] = useState(null);
+  const phoneInput = useRef();
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
   const navigation = useNavigation();
-  const [googleSumitting, setGoogleSumitting] = useState(false);
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((user) => {
-  //     if (user) {
-  //       navigation.navigate("Home", user);
-  //     }
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
-
-  const handleSignUp = () => {
-    auth
+  const handleSignUp = async () => {
+    await auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log("Registered with:", user.email);
+        const update = {
+          displayName: fullName,
+          photoURL: image,
+        };
+        auth.currentUser.updateProfile(update).then((res) => {
+          navigation.navigate("Home", auth.currentUser.displayName);
+          console.log("Registered with:", auth.currentUser.displayName);
+        });
       })
+
       .catch((error) => alert(error.message));
   };
-
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId:
-      "87010839973-jh3s6lulctkr02469k677ubtii1piqth.apps.googleusercontent.com",
-  });
-
-  React.useEffect(() => {
-    if (response?.type === "success") {
-      const { id_token } = response.params;
-
-      const auth = getAuth();
-      const credential = GoogleAuthProvider.credential(id_token);
-      signInWithCredential(auth, credential).then((result) => {
-        console.log(result);
-      });
-    }
-  }, [response]);
-
-  const BASE_PATH =
-    "https://www.seekpng.com/png/detail/115-1150053_avatar-png-transparent-png-royalty-free-default-user.png";
-  const proileImage = "react_logo.png";
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
-        {/* <UserAvatar
-          size={100}
-          name="Avishay Nar"
-          // src="https://dummyimage.com/100x100/000/fff"
-        /> */}
-        {/* <Image source={{ uri: BASE_PATH }} style={styles.sideMenuProfileIcon} /> */}
-        {/* <h1>Register Your Account</h1> */}
-
+        <Text style={styles.text}>Register Your Account</Text>
+        <TextInput
+          placeholder="Full Name"
+          value={fullName}
+          onChangeText={(text) => setFullName(text)}
+          style={styles.input}
+        />
+        <PhoneInput
+          containerStyle={styles.containerStyle}
+          textContainerStyle={styles.textContainerStyle}
+          ref={phoneInput}
+          defaultValue={phoneNumber}
+          defaultCode="EG"
+          layout="first"
+          onChangeText={(text) => {
+            setValue(text);
+          }}
+          onChangeFormattedText={(text) => setPhoneNumber(text)}
+          withDarkTheme={false}
+          withShadow={false}
+          autoFocus={false}
+          textProps={{
+            placeholder: "Enter a phone number",
+          }}
+        />
         <TextInput
           placeholder="Email"
           value={email}
@@ -94,6 +99,10 @@ const Register = () => {
           style={styles.input}
           secureTextEntry
         />
+        <Button title="Pick an image" onPress={pickImage} />
+        {image && (
+          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
+        )}
       </View>
 
       <View style={styles.buttonContainer}>
@@ -180,4 +189,20 @@ const styles = StyleSheet.create({
     borderRadius: 100 / 2,
     alignSelf: "center",
   },
+  text: {
+    textAlign: "center",
+    fontWeight: "700",
+    color: "#0782F9",
+    padding: 15,
+  },
+  containerStyle: {
+    borderColor: "grey",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 5,
+    width: "100%",
+    paddingTop: 8,
+    paddingBottom: 3,
+  },
+  textContainerStyle: { paddingTop: 8, backgroundColor: "white" },
 });

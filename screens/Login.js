@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/native";
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
-import { ResponseType } from "expo-auth-session";
 import * as Google from "expo-auth-session/providers/google";
 import {
   getAuth,
@@ -18,10 +17,7 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 import { auth } from "../firebase";
-import { createSwitchNavigator } from "react-navigation";
-import { Button } from "react-native-web";
-import UserAvatar from "react-native-user-avatar";
-//
+
 WebBrowser.maybeCompleteAuthSession();
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -38,7 +34,7 @@ const Login = () => {
     return unsubscribe;
   }, []);
 
-  const handleSignUp = () => {
+  const register = () => {
     auth
       .signOut()
       .then(() => {
@@ -65,7 +61,7 @@ const Login = () => {
   React.useEffect(() => {
     if (response?.type === "success") {
       const { id_token } = response.params;
-
+      console.log("nnnn");
       const auth = getAuth();
       const credential = GoogleAuthProvider.credential(id_token);
       signInWithCredential(auth, credential).then((result) => {
@@ -76,34 +72,9 @@ const Login = () => {
 
   const BASE_PATH =
     "https://www.seekpng.com/png/detail/115-1150053_avatar-png-transparent-png-royalty-free-default-user.png";
-  const proileImage = "react_logo.png";
-
-  //   setGoogleSumitting(true);
-  //   const config = {
-  //     androidClientId: `363109457211-9tp2oadmh1q8lmb4l5u109p4eg1guf79.apps.googleusercontent.com`,
-  //     scopes: ["profile", "email"],
-  //   };
-  //   Google.logInAsync(config)
-  //     .then((result) => {
-  //       const { type, user } = result;
-  //       if (type == "success") {
-  //       } else {
-  //       }
-  //       setGoogleSumitting(false);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setGoogleSumitting(false);
-  //     });
-  // };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
-        {/* <UserAvatar
-          size={100}
-          name="Avishay Nar"
-          // src="https://dummyimage.com/100x100/000/fff"
-        /> */}
         <Image source={{ uri: BASE_PATH }} style={styles.sideMenuProfileIcon} />
         <TextInput
           placeholder="Email"
@@ -125,7 +96,7 @@ const Login = () => {
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={handleSignUp}
+          onPress={register}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>

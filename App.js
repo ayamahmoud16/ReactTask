@@ -10,7 +10,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./screens/Login";
 import Home from "./screens/Home";
-import CustomSidebarMenu from "./CustomSidebarMenu";
+import SidebarMenu from "./SidebarMenu";
 import { View, TouchableOpacity, Image } from "react-native";
 import { auth } from "./firebase";
 import Register from "./screens/Register";
@@ -101,7 +101,7 @@ export default function App() {
           activeTintColor: "#e91e63",
           itemStyle: { marginVertical: 5 },
         }}
-        drawerContent={(props) => <CustomSidebarMenu {...props} />}
+        drawerContent={(props) => <SidebarMenu {...props} />}
       >
         <Drawer.Screen
           name="Login"

@@ -1,31 +1,34 @@
 import React from "react";
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  Linking,
-} from "react-native";
-
+import { SafeAreaView, StyleSheet, Text, Linking } from "react-native";
+import { auth } from "./firebase";
 import {
   DrawerContentScrollView,
   DrawerItemList,
   DrawerItem,
 } from "@react-navigation/drawer";
+import { Avatar } from "@react-native-material/core";
+import { useNavigation } from "@react-navigation/native";
 
-const CustomSidebarMenu = (props) => {
-  const BASE_PATH =
-    "https://raw.githubusercontent.com/AboutReact/sampleresource/master/";
-  const proileImage = "react_logo.png";
+const SidebarMenu = (props) => {
+  const navigation = useNavigation();
 
+  const handleSignOut = () => {
+    auth
+      .signOut()
+      .then(() => {
+        navigation.navigate("Login");
+      })
+      .catch((error) => alert(error.message));
+  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {/*Top Large Image */}
-      <Image
-        source={{ uri: BASE_PATH + proileImage }}
-        style={styles.sideMenuProfileIcon}
+      <Avatar
+        style={styles.avatar}
+        image={{ uri: auth.currentUser?.photoURL }}
       />
+      <Text style={[styles.avatar, styles.emailStyle]}>
+        {auth.currentUser?.email}
+      </Text>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
@@ -36,19 +39,7 @@ const CustomSidebarMenu = (props) => {
           label="Contact Us"
           onPress={() => Linking.openURL("https://www.itworx.com/contact/")}
         />
-        {/* <View style={styles.customItem}>
-          <Text
-            onPress={() => {
-              Linking.openURL("https://aboutreact.com/");
-            }}
-          >
-            About Us
-          </Text>
-          <Image
-            source={{ uri: BASE_PATH + "star_filled.png" }}
-            style={styles.iconStyle}
-          />
-        </View> */}
+        <DrawerItem label="Logout " onPress={handleSignOut} />
       </DrawerContentScrollView>
     </SafeAreaView>
   );
@@ -72,6 +63,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  avatar: { alignSelf: "center", margin: 5 },
+  emailStyle: { fontWeight: "bold", marginTop: 14 },
 });
 
-export default CustomSidebarMenu;
+export default SidebarMenu;

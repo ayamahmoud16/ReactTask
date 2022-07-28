@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/core";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { auth } from "../firebase";
@@ -14,10 +14,11 @@ const Home = () => {
       })
       .catch((error) => alert(error.message));
   };
-  console.log(auth.currentUser?.email);
+  console.log(auth.currentUser?.displayName);
+
   return (
     <View style={styles.container}>
-      <Text>Welcome {auth.currentUser?.email}</Text>
+      <Text>Welcome {auth.currentUser?.displayName}</Text>
       <TouchableOpacity onPress={handleSignOut} style={styles.button}>
         <Text style={styles.buttonText}>Sign out</Text>
       </TouchableOpacity>
